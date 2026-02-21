@@ -13,20 +13,29 @@ public class QuaxGUI extends Application{
     private Label statusLabel = new Label("BLACK to play");
     private Button pieRuleButton = new Button("Activate Pie Rule");
 
-    @Override
     public void start(Stage stage) {
         stage.setTitle("Quax 1v1");
 
         BorderPane root = new BorderPane();
         BoardRenderer renderer = new BoardRenderer();
+
         root.setCenter(renderer.createBoardUI(board));
 
-        VBox controls = new VBox(10, statusLabel, pieRuleButton);
         pieRuleButton.setVisible(false);
+        pieRuleButton.setOnAction(e -> handlePieRule());
+
+        VBox controls = new VBox(20, statusLabel, pieRuleButton);
+        controls.setPrefWidth(200);
         root.setRight(controls);
 
-        Scene scene = new Scene(root, 900, 700);
+        stage.setResizable(true);
+        Scene scene = new Scene(root, 1200, 900);
         stage.setScene(scene);
         stage.show();
+    }
+
+    private void handlePieRule() {
+        pieRuleButton.setVisible(false);
+        statusLabel.setText("Pie Rule Activated! WHITE is now BLACK.");
     }
 }
