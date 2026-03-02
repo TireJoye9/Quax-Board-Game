@@ -1,5 +1,8 @@
 package swe2.co.sweprojectsht;
 
+import java.security.KeyStore;
+import java.util.Objects;
+
 public abstract class Cell {
     protected String owner = "NONE"; // Options: "BLACK" - "WHITE" - "NONE"
 
@@ -11,7 +14,15 @@ public abstract class Cell {
         this.owner = owner;
     }
 
-    public boolean isUnoccupied() {
-        return "NONE".equals(this.owner);
+    public boolean isOcuupied() {
+
+        if (Objects.equals(this.getOwner(), "NONE"))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 }

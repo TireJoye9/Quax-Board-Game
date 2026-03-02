@@ -9,9 +9,12 @@ import javafx.stage.Stage;
 
 public class MainMenu {
     private Stage stage;
+    public static QuaxGUI game;
 
     public MainMenu(Stage stage) {
         this.stage = stage;
+    }
+    public MainMenu() {
     }
 
     public void show() {
@@ -33,7 +36,15 @@ public class MainMenu {
     }
 
     private void launchGame() {
-        QuaxGUI game = new QuaxGUI();
-        game.start(stage);
+        //Only exists because setLabel was not working due to it editing different instances of QuaxGui
+        game = new QuaxGUI();
+        try {
+            game.start(new Stage());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    public static QuaxGUI getQuaxGUI() {
+        return game;
     }
 }

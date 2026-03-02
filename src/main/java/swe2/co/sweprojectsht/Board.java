@@ -1,23 +1,28 @@
 package swe2.co.sweprojectsht;
 
+//Board class
 public class Board {
     private final int SIZE = 11;
-    private OctagonalCell[][] stoneGrid;
-    private RhombicCell[][] tileGrid;
+    //Stone Grid is a 2d array that holds octagonal cells
+    private final OctagonalCellTemplate[][] stoneGrid;
+    private final RhombicCellTemplate[][] tileGrid;
+    int integer;
 
     public Board() {
-        stoneGrid = new OctagonalCell[SIZE][SIZE];
-        tileGrid = new RhombicCell[SIZE - 1][SIZE - 1];
+        stoneGrid = new OctagonalCellTemplate[SIZE][SIZE];
+        //-1 as there is only 10 squares
+        tileGrid = new RhombicCellTemplate[SIZE - 1][SIZE - 1];
         initialise();
     }
 
+    //Creates the layout
     private void initialise() {
         for (int i = 0; i < SIZE; i++) {
             for (int j = 0; j < SIZE; j++) {
-                stoneGrid[i][j] = new OctagonalCell();
-
+                //initialised stoneGrid
+                stoneGrid[i][j] = new OctagonalCellTemplate();
                 if (i < SIZE - 1 && j < SIZE - 1) {
-                    tileGrid[i][j] = new RhombicCell();
+                    tileGrid[i][j] = new RhombicCellTemplate();
                 }
             }
         }
