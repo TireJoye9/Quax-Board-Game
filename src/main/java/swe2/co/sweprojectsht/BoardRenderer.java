@@ -1,114 +1,155 @@
 package swe2.co.sweprojectsht;
 
 import javafx.scene.layout.Pane;
-import javafx.scene.control.Label;
 import javafx.scene.shape.Polygon;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 
-public class BoardRenderer {
-    private final double SPACING = 35.0;
-    private final double OFFSET = 80.0;
+public class BoardRenderer extends Pane {
+    private Board board;
+    private GameEngine engine;
 
-    public Pane createBoardUI(Board board) {
-        Pane pane = new Pane();
+    public BoardRenderer(Board board, GameEngine engine) {
+        this.board = board;
+        this.engine = engine;
 
-        // 1. OUTER FRAME
-        double outerFrameSize = (10 * SPACING) + 120;
-        Rectangle outerFrame = new Rectangle(OFFSET - 60, OFFSET - 60, outerFrameSize, outerFrameSize);
-        outerFrame.setFill(Color.LIGHTGRAY);
-        outerFrame.setStroke(Color.BLACK);
-        outerFrame.setStrokeWidth(2);
-        pane.getChildren().add(outerFrame);
-
-        // 2. INNER FRAME
-        double innerFrameSize = (10 * SPACING) + 40;
-        Rectangle innerFrame = new Rectangle(OFFSET - 20, OFFSET - 20, innerFrameSize, innerFrameSize);
-        innerFrame.setFill(Color.WHITE);
-        innerFrame.setStroke(Color.BLACK);
-        innerFrame.setStrokeWidth(2);
-        pane.getChildren().add(innerFrame);
-
-        String[] alphabets = {"A","B","C","D","E","F","G","H","I","J","K"};
-
-        // 3. PLACE LABELS
-        for (int i = 0; i < 11; i++) {
-            // Top Labels
-            Label topL = new Label(alphabets[i]);
-            topL.setLayoutX(OFFSET + i * SPACING - 5);
-            topL.setLayoutY(OFFSET - 45);
-
-            // Bottom Labels
-            Label botL = new Label(alphabets[i]);
-            botL.setLayoutX(OFFSET + i * SPACING - 5);
-            botL.setLayoutY(OFFSET + 10 * SPACING + 25);
-
-            // Left Labels
-            Label leftL = new Label(String.valueOf(i + 1));
-            leftL.setLayoutX(OFFSET - 50);
-            leftL.setLayoutY(OFFSET + i * SPACING - 10);
-
-            // Right Labels
-            Label rightL = new Label(String.valueOf(i + 1));
-            rightL.setLayoutX(OFFSET + 10 * SPACING + 35);
-            rightL.setLayoutY(OFFSET + i * SPACING - 10);
-
-            pane.getChildren().addAll(topL, botL, leftL, rightL);
-        }
-
-        // 4. DRAW TILES
-        for (int r = 0; r < 10; r++) {
-            for (int c = 0; c < 10; c++) {
-                double rx = OFFSET + (c * SPACING) + (SPACING / 2);
-                double ry = OFFSET + (r * SPACING) + (SPACING / 2);
-
-                Polygon rhombus = createRhombus(rx, ry, SPACING / 2);
-                rhombus.setFill(Color.SKYBLUE);
-                rhombus.setStroke(Color.DARKGRAY);
-                pane.getChildren().add(rhombus);
-            }
-        }
-
-        // 5. DRAW STONES
-        for (int r = 0; r < 11; r++) {
-            for (int c = 0; c < 11; c++) {
-                double ox = OFFSET + c * SPACING;
-                double oy = OFFSET + r * SPACING;
-
-                double apothem = SPACING / 2.0;
-                double radiusToTouch = apothem / Math.cos(Math.toRadians(22.5));
-
-                Polygon octagon = createOctagon(ox, oy, radiusToTouch);
-                octagon.setFill(Color.LIGHTBLUE);
-                octagon.setStroke(Color.BLACK);
-                pane.getChildren().add(octagon);
-            }
-        }
-
-        return pane;
+        widthProperty().addListener(e -> render());
+        heightProperty().addListener(e -> render());
     }
 
-    private Polygon createOctagon(double x, double y, double radius) {
-        Polygon polygon = new Polygon();
+    public void render() {
+
+        getChildren().clear();
+
+        double width = getWidth();
+        double height = getHeight();
+
+        double boardSize = Math.min(width, height);
+        double margin = boardSize * 0.05;
+
+        double playable = boardSize - margin * 2;
+
+        double spacing = playable / (Board.SIZE - 1);
+
+        double octRadius = spacing / (2 * Math.cos(Math.toRadians(22.5)));
+
+        double diamondSize = (2 * octRadius * Math.sin(Math.toRadians(22.5))) / Math.sqrt(2);
+
+        drawDiamonds(margin, spacing, diamondSize);
+
+        //diamonds drawing
+//        for (int r = 0; r < Board.SIZE - 1; r++) {
+//
+//            for (int c = 0; c < Board.SIZE - 1; c++) {
+//
+//                double cx = margin + c * spacing + spacing / 2;
+//                double cy = margin + r * spacing + spacing / 2;
+//
+//                Polygon d = new Polygon(
+//                        cx, cy - diamondSize,
+//                        cx + diamondSize, cy,
+//                        cx, cy + diamondSize,
+//                        cx - diamondSize, cy
+//                );
+//
+//                d.setFill(Color.GRAY);
+//                d.setStroke(Color.BLACK);
+//
+//                getChildren().add(d);
+//            }
+//        }
+
+        //octagons drawing
+        for (int r = 0; r < Board.SIZE; r++) {
+
+            for (int c = 0; c < Board.SIZE; c++) {
+
+                double cx = margin + c * spacing;
+                double cy = margin + r * spacing;
+
+                Polygon oct = createOctagon(cx, cy, octRadius);
+
+                OctagonalCell cell = board.getOctagon(r, c);
+
+                if (cell.getOwner() == Player.BLACK)
+                    oct.setFill(Color.BLACK);
+
+                else if (cell.getOwner() == Player.WHITE)
+                    oct.setFill(Color.WHITE);
+
+                else
+                    oct.setFill(Color.LIGHTGRAY);
+
+                int rr = r;
+                int cc = c;
+
+                oct.setOnMouseClicked(e -> {
+
+                    if (engine.placePiece(rr, cc)) {
+
+                        render();
+                    }
+                });
+
+                getChildren().add(oct);
+            }
+        }
+    }
+
+    private Polygon createOctagon(double cx, double cy, double r) {
+
+        Polygon p = new Polygon();
+
         for (int i = 0; i < 8; i++) {
+
             double angle = Math.toRadians(45 * i + 22.5);
-            polygon.getPoints().addAll(
-                    x + radius * Math.cos(angle),
-                    y + radius * Math.sin(angle)
-            );
+
+            double x = cx + r * Math.cos(angle);
+            double y = cy + r * Math.sin(angle);
+
+            p.getPoints().addAll(x, y);
         }
-        return polygon;
+
+        p.setStroke(Color.BLACK);
+
+        return p;
     }
 
-    private Polygon createRhombus(double x, double y, double size) {
-        Polygon polygon = new Polygon();
+    private void drawDiamonds(double margin, double spacing, double size) {
+        for (int r = 0; r < Board.SIZE - 1; r++) {
+            for (int c = 0; c < Board.SIZE - 1; c++) {
 
-        polygon.getPoints().addAll(
-                x, y - size,
-                x + size, y,
-                x, y + size,
-                x - size, y
-        );
-        return polygon;
+                double cx = margin + c * spacing + spacing / 2;
+                double cy = margin + r * spacing + spacing / 2;
+
+                Polygon d = new Polygon(
+                        cx, cy - size,
+                        cx + size, cy,
+                        cx, cy + size,
+                        cx - size, cy
+                );
+
+                RhombicCell cell = board.getDiamond(r, c);
+
+                if (cell.getOwner() == Player.BLACK)
+                    d.setFill(Color.BLACK);
+                else if (cell.getOwner() == Player.WHITE)
+                    d.setFill(Color.WHITE);
+                else
+                    d.setFill(Color.GRAY);
+
+                d.setStroke(Color.BLACK);
+
+                int rr = r;
+                int cc = c;
+
+                d.setOnMouseClicked(e -> {
+                    if (engine.placeBridge(rr, cc)) {
+                        render();
+                    }
+                });
+
+                getChildren().add(d);
+            }
+        }
     }
 }

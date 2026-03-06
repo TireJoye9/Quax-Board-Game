@@ -2,18 +2,19 @@ package swe2.co.sweprojectsht;
 
 import javafx.scene.shape.Polygon;
 
-static public class OctagonalCell extends Cell{
+class OctagonalCell extends Cell{
+    private Player owner = Player.NONE;
 
-    public Polygon createOctagon(double x, double y, double radius) {
-        Polygon polygon = new Polygon();
-        for (int i = 0; i < 8; i++) {
-            double angle = Math.toRadians(45 * i + 22.5);
-            polygon.getPoints().addAll(
-                    x + radius * Math.cos(angle),
-                    y + radius * Math.sin(angle)
-            );
-            //Interactivity
-        }
-        return polygon;
+    public OctagonalCell(int r, int c) {
+        row = r;
+        col = c;
+    }
+
+    public Player getOwner() {
+        return owner;
+    }
+
+    public void setOwner(Player player) {
+        owner = player;
     }
 }

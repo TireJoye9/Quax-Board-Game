@@ -1,17 +1,19 @@
 package swe2.co.sweprojectsht;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public abstract class Cell {
-    protected String owner = "NONE"; // Options: "BLACK" - "WHITE" - "NONE"
+    protected int row;
+    protected int col;
 
-    public String getOwner() {
-        return owner;
+    protected List<Cell> neighbours = new ArrayList<>();
+
+    public void addNeighbour(Cell cell) {
+        neighbours.add(cell);
     }
 
-    public void setOwner(String owner) {
-        this.owner = owner;
-    }
-
-    public boolean isUnoccupied() {
-        return "NONE".equals(this.owner);
+    public List<Cell> getNeighbours() {
+        return neighbours;
     }
 }

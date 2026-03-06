@@ -1,41 +1,51 @@
 package swe2.co.sweprojectsht;
 
-import javafx.application.Application;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 
-public class QuaxGUI extends Application{
-    private Board board = new Board();
-    private Label statusLabel = new Label("BLACK to play");
-    private Button pieRuleButton = new Button("Activate Pie Rule");
+import java.util.Optional;
 
-    public void start(Stage stage) {
-        stage.setTitle("Quax 1v1");
+public class QuaxGUI extends BorderPane {
+    private Board board;
+    private GameEngine engine;
+    private BoardRenderer renderer;
 
-        BorderPane root = new BorderPane();
-        BoardRenderer renderer = new BoardRenderer();
+    public  QuaxGUI() {
 
-        root.setCenter(renderer.createBoardUI(board));
+        board = new Board();
+        engine = new GameEngine(board);
+        renderer = new BoardRenderer(board, engine);
 
-        pieRuleButton.setVisible(false);
-        pieRuleButton.setOnAction(e -> handlePieRule());
+        setCenter(renderer);
 
-        VBox controls = new VBox(20, statusLabel, pieRuleButton);
-        controls.setPrefWidth(200);
-        root.setRight(controls);
+        renderer.render();
 
-        stage.setResizable(true);
-        Scene scene = new Scene(root, 1200, 900);
-        stage.setScene(scene);
-        stage.show();
+        renderer.setOnMouseClicked(e -> checkSwapRule());
     }
 
-    private void handlePieRule() {
-        pieRuleButton.setVisible(false);
-        statusLabel.setText("Pie Rule Activated! WHITE is now BLACK.");
+    private void checkSwapRule() {
+
+        if (!engine.swapOffer()) {
+            return;
+        }
+
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Swap Rule");
+        alert.setHeaderText("Player 2");
+        alert.setContentText("Do you want to swap colours?");
+
+        ButtonType yes = new ButtonType("Yes");
+        ButtonType no = new ButtonType("No");
+
+        alert.getButtonTypes().setAll(yes, no);
+
+        Optional<ButtonType> result = alert.showAndWait();
+
+        if (result.isPresent() && result.get() == yes) {
+            engine.performSwap();
+        }
+
+        engine.markSwapOffered();
     }
 }
