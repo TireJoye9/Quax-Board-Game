@@ -76,4 +76,8 @@ public class Board {
     public RhombicCell getDiamond(int r, int c) {
         return diamonds[r][c];
     }
+
+    public void reset() {
+        // clears all octagons and diamonds
+    }
 }

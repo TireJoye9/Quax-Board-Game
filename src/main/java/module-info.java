@@ -10,6 +10,7 @@ module swe2.co.sweprojectsht {
     requires org.kordamp.bootstrapfx.core;
     requires eu.hansolo.tilesfx;
     requires com.almasb.fxgl.all;
+    requires java.desktop;
 
     opens swe2.co.sweprojectsht to javafx.fxml;
     exports swe2.co.sweprojectsht;

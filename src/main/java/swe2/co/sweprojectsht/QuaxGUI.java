@@ -14,7 +14,7 @@ public class QuaxGUI extends BorderPane {
     public  QuaxGUI() {
 
         board = new Board();
-        engine = new GameEngine(board);
+        engine = new GameEngine(board, this);
         renderer = new BoardRenderer(board, engine);
 
         setCenter(renderer);
@@ -24,7 +24,7 @@ public class QuaxGUI extends BorderPane {
         renderer.setOnMouseClicked(e -> checkSwapRule());
     }
 
-    private void checkSwapRule() {
+    void checkSwapRule() {
 
         if (!engine.swapOffer()) {
             return;
@@ -47,5 +47,15 @@ public class QuaxGUI extends BorderPane {
         }
 
         engine.markSwapOffered();
+    }
+
+    void resetGame() {
+
+        board = new Board();
+        engine = new GameEngine(board, this);
+        renderer = new BoardRenderer(board, engine);
+
+        setCenter(renderer);
+        renderer.render();
     }
 }
