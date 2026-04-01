@@ -27,6 +27,10 @@ public class GameEngine {
         return quaxGUI;
     }
 
+    public Player getCurrentPlayer() {
+        return currentPlayer;
+    }
+
     public boolean swapOffer() {
         return firstMoveMade && !swapOffered;
     }
@@ -62,7 +66,7 @@ public class GameEngine {
 
         OctagonalCell cell = board.getOctagon(r, c);
 
-        if(cell.getOwner() != Player.NONE) {
+        if (cell.getOwner() != Player.NONE) {
             return false;
         }
 

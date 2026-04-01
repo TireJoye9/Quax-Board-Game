@@ -2,11 +2,13 @@ package swe2.co.sweprojectsht;
 
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 
 import java.util.Optional;
 
 public class QuaxGUI extends BorderPane {
+    private Label turn;
     private Board board;
     private GameEngine engine;
     private BoardRenderer renderer;
@@ -17,11 +19,25 @@ public class QuaxGUI extends BorderPane {
         engine = new GameEngine(board, this);
         renderer = new BoardRenderer(board, engine);
 
+        turn = new Label();
+        turn.setStyle("-fx-font-size: 16px");
+        updateTurnLabel();
+
+        setTop(turn);
         setCenter(renderer);
 
         renderer.render();
 
         renderer.setOnMouseClicked(e -> checkSwapRule());
+    }
+
+    public void updateTurnLabel() {
+
+        if (engine.getCurrentPlayer() == Player.BLACK) {
+            turn.setText("BLACK to play:");
+        } else {
+            turn.setText("WHITE to play:");
+        }
     }
 
     void checkSwapRule() {
@@ -44,6 +60,8 @@ public class QuaxGUI extends BorderPane {
 
         if (result.isPresent() && result.get() == yes) {
             engine.performSwap();
+            updateTurnLabel();
+            renderer.render();
         }
 
         engine.markSwapOffered();
@@ -56,6 +74,8 @@ public class QuaxGUI extends BorderPane {
         renderer = new BoardRenderer(board, engine);
 
         setCenter(renderer);
+
+        updateTurnLabel();
         renderer.render();
     }
 }
