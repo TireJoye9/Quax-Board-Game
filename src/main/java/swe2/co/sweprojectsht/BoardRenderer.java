@@ -100,6 +100,7 @@ public class BoardRenderer extends Pane {
 
                     if (engine.placePiece(rr, cc)) {
                         render();
+                        engine.getQuaxGUI().updateTurnLabel();
                         engine.getQuaxGUI().checkSwapRule();
                     }
                 });
@@ -193,6 +194,7 @@ public class BoardRenderer extends Pane {
                 d.setOnMouseClicked(e -> {
                     if (engine.placeBridge(rr, cc)) {
                         render();
+                        engine.getQuaxGUI().updateTurnLabel();
                     }
                 });
 
