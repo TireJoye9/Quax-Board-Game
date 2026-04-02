@@ -7,37 +7,43 @@ import javafx.scene.control.Label;
 import javafx.scene.shape.Rectangle;
 
 public class BoardRenderer extends Pane {
-    private Board board;
-    private GameEngine engine;
+    private Board board;        // Reference to the games state
+    private GameEngine engine;  // Reference to the games logic
 
     public BoardRenderer(Board board, GameEngine engine) {
         this.board = board;
         this.engine = engine;
 
+        // Render again every time the window is resized, so the game fills the new window
         widthProperty().addListener(e -> render());
         heightProperty().addListener(e -> render());
     }
 
+    // Clears and redraws the board based on the current game state
     public void render() {
 
-        getChildren().clear();
+        getChildren().clear(); // Clears the previous drawing
 
-        double width = getWidth();
+        double width = getWidth(); // Gets size of the window
         double height = getHeight();
 
-        double boardSize = Math.min(width, height);
-        double framePadding = boardSize * 0.08;
+        double boardSize = Math.min(width, height); // Keeps the board as a square
+        double framePadding = boardSize * 0.08;     // Adds margin
         double margin = framePadding;
 
+        // Playable area inside the margins
         double playable = boardSize - margin * 2;
 
+        // Distance between octagon centres
         double spacing = playable / (Board.SIZE - 1);
 
+        // Radius of an octagon to make sure they touch perfectly
         double octRadius = spacing / (2 * Math.cos(Math.toRadians(22.5)));
 
+        // Size of the diamonds between the octagons
         double diamondSize = (2 * octRadius * Math.sin(Math.toRadians(22.5))) / Math.sqrt(2);
 
-        // outer rectangle
+        // OUTER FRAME SIZES
         double outerFrameOffset = spacing * 0.9;
 
         Rectangle frame = new Rectangle(
@@ -53,7 +59,7 @@ public class BoardRenderer extends Pane {
 
         getChildren().add(frame);
 
-        // inner rectangle
+        // INNER FRAME SIZES
         double innerFrameOffset = spacing * 0.6;
 
         Rectangle innerFrame = new Rectangle(
@@ -69,11 +75,13 @@ public class BoardRenderer extends Pane {
 
         getChildren().add(innerFrame);
 
+        // Draw 'goals'
         drawGoalBands(margin, playable, spacing);
 
+        // Draw diamonds
         drawDiamonds(margin, spacing, diamondSize);
 
-        //octagons drawing
+        // Draw octagons
         for (int r = 0; r < Board.SIZE; r++) {
 
             for (int c = 0; c < Board.SIZE; c++) {
@@ -85,6 +93,7 @@ public class BoardRenderer extends Pane {
 
                 OctagonalCell cell = board.getOctagon(r, c);
 
+                // Set cell colour based on ownership
                 if (cell.getOwner() == Player.BLACK) {
                     oct.setFill(Color.BLACK);
                 } else if (cell.getOwner() == Player.WHITE) {
@@ -96,12 +105,13 @@ public class BoardRenderer extends Pane {
                 int rr = r;
                 int cc = c;
 
+                // Handle clicks to place a piece
                 oct.setOnMouseClicked(e -> {
 
                     if (engine.placePiece(rr, cc)) {
-                        render();
-                        engine.getQuaxGUI().updateTurnLabel();
-                        engine.getQuaxGUI().checkSwapRule();
+                        render();                               // Redraw Board
+                        engine.getQuaxGUI().updateTurnLabel();  // Update turn label
+                        engine.getQuaxGUI().checkSwapRule();    // Check if there should be a swap rule
                     }
                 });
 
@@ -109,14 +119,16 @@ public class BoardRenderer extends Pane {
             }
         }
 
+        // Draw coordinate labels
         drawCoordinates(margin, spacing);
     }
 
+    // Draws row numbers along the left and also column letters along the bottom
     private void drawCoordinates(double margin, double spacing) {
 
         String[] letters = {"A","B","C","D","E","F","G","H","I","J","K"};
 
-        // row numbers on the left
+        // Row numbers on the left
         for (int r = 0; r < Board.SIZE; r++) {
 
             double y = margin + r * spacing;
@@ -129,7 +141,7 @@ public class BoardRenderer extends Pane {
             getChildren().add(rowLabel);
         }
 
-        // column letters on the bottom
+        // Column letters on the bottom
         for (int c = 0; c < Board.SIZE; c++) {
 
             double x = margin + c * spacing;
@@ -143,6 +155,7 @@ public class BoardRenderer extends Pane {
         }
     }
 
+    // Creates octagons at  specific coordinates
     private Polygon createOctagon(double cx, double cy, double r) {
 
         Polygon p = new Polygon();
@@ -162,6 +175,7 @@ public class BoardRenderer extends Pane {
         return p;
     }
 
+    // Draws diamonds
     private void drawDiamonds(double margin, double spacing, double size) {
         for (int r = 0; r < Board.SIZE - 1; r++) {
             for (int c = 0; c < Board.SIZE - 1; c++) {
@@ -178,6 +192,7 @@ public class BoardRenderer extends Pane {
 
                 RhombicCell cell = board.getDiamond(r, c);
 
+                // Sets colour based on opwnership
                 if (cell.getOwner() == Player.BLACK) {
                     d.setFill(Color.BLACK);
                 } else if (cell.getOwner() == Player.WHITE) {
@@ -191,10 +206,11 @@ public class BoardRenderer extends Pane {
                 int rr = r;
                 int cc = c;
 
+                // Handles clicks to place piece
                 d.setOnMouseClicked(e -> {
                     if (engine.placeBridge(rr, cc)) {
                         render();
-                        engine.getQuaxGUI().updateTurnLabel();
+                        engine.getQuaxGUI().updateTurnLabel(); // Update the turn after the placement
                     }
                 });
 
@@ -203,6 +219,7 @@ public class BoardRenderer extends Pane {
         }
     }
 
+    // Draws the 'goals' at each end of the board
     private void drawGoalBands(double margin, double playable, double spacing) {
 
         double innerOffset = spacing * 0.6;
