@@ -100,19 +100,6 @@ public class GameEngine {
             return false;
         }
 
-        OctagonalCell topLeft = board.getOctagon(r, c);
-        OctagonalCell topRight = board.getOctagon(r, c + 1);
-        OctagonalCell bottomLeft = board.getOctagon(r + 1, c);
-        OctagonalCell bottomRight = board.getOctagon(r + 1, c + 1);
-
-        boolean diag1 = topLeft.getOwner() == currentPlayer && bottomRight.getOwner() == currentPlayer;
-
-        boolean diag2 = topRight.getOwner() == currentPlayer && bottomLeft.getOwner() == currentPlayer;
-
-        if (!diag1 && !diag2) {
-            return false;
-        }
-
         diamond.setOwner(currentPlayer);
 
         if (checkWin(currentPlayer)) {

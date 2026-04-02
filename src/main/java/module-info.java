@@ -11,6 +11,7 @@ module swe2.co.sweprojectsht {
     requires eu.hansolo.tilesfx;
     requires com.almasb.fxgl.all;
     requires java.desktop;
+    requires javafx.graphics;
 
     opens swe2.co.sweprojectsht to javafx.fxml;
     exports swe2.co.sweprojectsht;

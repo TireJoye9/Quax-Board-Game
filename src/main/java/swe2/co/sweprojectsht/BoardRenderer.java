@@ -26,7 +26,7 @@ public class BoardRenderer extends Pane {
         double height = getHeight();
 
         double boardSize = Math.min(width, height);
-        double framePadding = boardSize * 0.08;
+        double framePadding = boardSize * 0.20;
         double margin = framePadding;
 
         double playable = boardSize - margin * 2;
@@ -142,6 +142,7 @@ public class BoardRenderer extends Pane {
             getChildren().add(colLabel);
         }
     }
+
 
     private Polygon createOctagon(double cx, double cy, double r) {
 
