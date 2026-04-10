@@ -5,6 +5,8 @@ import javafx.scene.shape.Polygon;
 import javafx.scene.paint.Color;
 import javafx.scene.control.Label;
 import javafx.scene.shape.Rectangle;
+import java.util.Random;
+
 
 public class BoardRenderer extends Pane {
     private Board board;
@@ -96,12 +98,19 @@ public class BoardRenderer extends Pane {
                 int rr = r;
                 int cc = c;
 
+
                 oct.setOnMouseClicked(e -> {
+
 
                     if (engine.placePiece(rr, cc)) {
                         render();
                         engine.getQuaxGUI().updateTurnLabel();
                         engine.getQuaxGUI().checkSwapRule();
+                    }
+
+                    // After human moves, let bot move if game isn't over
+                    if (!engine.checkWin(engine.getHumanPlayer()) ||!engine.checkWin(engine.getBotPlayer())) {
+                        engine.getQuaxGUI().makeBotMove();
                     }
                 });
 
@@ -257,3 +266,15 @@ public class BoardRenderer extends Pane {
         getChildren().addAll(topBand, bottomBand, leftBand, rightBand);
     }
 }
+
+/*
+                    if (cell.getOwner() == Player.WHITE)
+                    {
+                        Random random = new Random();
+                        engine.placePiece(random.nextInt(Board.SIZE),random.nextInt(Board.SIZE));
+                        render();
+                        engine.getQuaxGUI().updateTurnLabel();
+                        engine.getQuaxGUI().checkSwapRule();
+                    }
+                    else
+ */
