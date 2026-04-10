@@ -1,5 +1,7 @@
 package swe2.co.sweprojectsht;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
@@ -8,9 +10,12 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
-import javafx.scene.shape.Rectangle;
+import javafx.util.Duration;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 public class QuaxGUI extends BorderPane {
     private Label turn;
@@ -40,7 +45,7 @@ public class QuaxGUI extends BorderPane {
 
         //Set graphic can only set one element so I have to create a container
         HBox shapeContainer = new HBox(5); // 5px spacing between shapes
-        if (engine.getCurrentPlayer() == Player.BLACK) {
+        if (engine.getHumanPlayer() == Player.BLACK) {
 
             Polygon octogon = createOctagonForLabel(20, 20, 12);
             octogon.setFill(Color.BLACK);
@@ -129,6 +134,71 @@ public class QuaxGUI extends BorderPane {
         }
 
         engine.markSwapOffered();
+    }
+
+    protected void makeBotMove() {
+        // Small delay so bot doesn't move instantly
+        Timeline delay = new Timeline(new KeyFrame(Duration.millis(500), e -> {
+            executeBotMove();
+        }));
+        delay.setCycleCount(1);
+        delay.play();
+    }
+
+    protected void executeBotMove() {
+        if (engine.checkWin(engine.getBotPlayer())) {
+            return;
+        }
+
+        // Collect all empty octagon positions
+        List<int[]> emptyOctagons = new ArrayList<>();
+        for (int r = 0; r < Board.SIZE; r++) {
+            for (int c = 0; c < Board.SIZE; c++) {
+                if (board.getOctagon(r, c).getOwner() == Player.NONE) {
+                    emptyOctagons.add(new int[]{r, c, 0}); // 0 = octagon
+                }
+            }
+        }
+
+        // Collect all empty diamond (bridge) positions
+        List<int[]> emptyDiamonds = new ArrayList<>();
+        for (int r = 0; r < Board.SIZE - 1; r++) {
+            for (int c = 0; c < Board.SIZE - 1; c++) {
+                if (board.getDiamond(r, c).getOwner() == Player.NONE) {
+                    emptyDiamonds.add(new int[]{r, c, 1}); // 1 = diamond
+                }
+            }
+        }
+
+        // Combine all possible moves
+        List<int[]> allMoves = new ArrayList<>();
+        allMoves.addAll(emptyOctagons);
+        allMoves.addAll(emptyDiamonds);
+
+        if (allMoves.isEmpty()) {
+            return; // No moves available
+        }
+
+        // Pick random move
+        Random rand = new Random();
+        int[] move = allMoves.get(rand.nextInt(allMoves.size()));
+        int r = move[0];
+        int c = move[1];
+        int type = move[2];
+
+        boolean success;
+        if (type == 0) {
+            success = engine.botPlacePiece(r, c);
+        } else {
+            success = engine.botPlaceBridge(r, c);
+        }
+
+        if (success) {
+            renderer.render(); // Update the board
+            updateTurnLabel();
+
+
+        }
     }
 
     void resetGame() {

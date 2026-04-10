@@ -8,7 +8,8 @@ import java.util.Optional;
 
 public class GameEngine {
     private Board board;
-    private Player currentPlayer;
+    private Player humanPlayer;
+    private Player botPlayer;
     private QuaxGUI quaxGUI;
     private boolean firstMoveMade = false;
     private boolean swapOffered = false;
@@ -18,7 +19,8 @@ public class GameEngine {
 
     public GameEngine(Board board, QuaxGUI quaxGUI) {
         this.board = board;
-        this.currentPlayer = Player.BLACK;
+        this.humanPlayer = Player.BLACK;
+        this.botPlayer = Player.WHITE;
         this.quaxGUI = quaxGUI;
         this.gameOver = false;
     }
@@ -27,9 +29,11 @@ public class GameEngine {
         return quaxGUI;
     }
 
-    public Player getCurrentPlayer() {
-        return currentPlayer;
+    public Player getHumanPlayer() {
+        return humanPlayer;
     }
+
+    public Player getBotPlayer() { return botPlayer; }
 
     public boolean swapOffer() {
         return firstMoveMade && !swapOffered;
@@ -43,10 +47,12 @@ public class GameEngine {
 
         swapOffered = true;
 
-        if (currentPlayer == Player.BLACK) {
-            currentPlayer = Player.WHITE;
+        if (humanPlayer == Player.BLACK) {
+            botPlayer = Player.BLACK;
+            humanPlayer = Player.WHITE;
         } else {
-            currentPlayer = Player.BLACK;
+            humanPlayer = Player.BLACK;
+            botPlayer = Player.WHITE;
         }
 
         OctagonalCell firstCell = board.getOctagon(firstMoveRow, firstMoveCol);
@@ -66,15 +72,20 @@ public class GameEngine {
 
         OctagonalCell cell = board.getOctagon(r, c);
 
+
         if (cell.getOwner() != Player.NONE) {
             return false;
         }
 
-        cell.setOwner(currentPlayer);
+        cell.setOwner(humanPlayer);
 
-        if (checkWin(currentPlayer)) {
+        if (checkWin(humanPlayer)) {
             gameOver = true;
-            showWinnerPopup(currentPlayer);
+            showWinnerPopup(humanPlayer);
+        }
+        else if (checkWin(botPlayer)) {
+            gameOver = true;
+            showWinnerPopup(botPlayer);
         }
 
         if (!firstMoveMade) {
@@ -83,7 +94,62 @@ public class GameEngine {
             firstMoveCol = c;
         }
 
-        switchPlayer();
+        //switchPlayer();
+
+        return true;
+    }
+
+    public boolean botPlacePiece(int r, int c) {
+
+        if (gameOver) {
+            return false;
+        }
+
+        OctagonalCell cell = board.getOctagon(r, c);
+
+
+        if (cell.getOwner() != Player.NONE) {
+            return false;
+        }
+
+        cell.setOwner(botPlayer);
+
+        if (checkWin(humanPlayer)) {
+            gameOver = true;
+            showWinnerPopup(humanPlayer);
+        }
+        else if (checkWin(botPlayer)) {
+            gameOver = true;
+            showWinnerPopup(botPlayer);
+        }
+
+        if (!firstMoveMade) {
+            firstMoveMade = true;
+            firstMoveRow = r;
+            firstMoveCol = c;
+        }
+
+        return true;
+    }
+
+    public boolean botPlaceBridge(int r, int c) {
+
+        if (gameOver) {
+            return false;
+        }
+
+        RhombicCell diamond = board.getDiamond(r, c);
+
+        if (diamond.getOwner() != Player.NONE) {
+            return false;
+        }
+
+        diamond.setOwner(botPlayer);
+
+        if (checkWin(botPlayer)) {
+            gameOver = true;
+            showWinnerPopup(botPlayer);
+        }
 
         return true;
     }
@@ -100,28 +166,18 @@ public class GameEngine {
             return false;
         }
 
-        diamond.setOwner(currentPlayer);
+        diamond.setOwner(humanPlayer);
 
-        if (checkWin(currentPlayer)) {
+        if (checkWin(humanPlayer)) {
             gameOver = true;
-            showWinnerPopup(currentPlayer);
+            showWinnerPopup(humanPlayer);
         }
-
-        switchPlayer();
 
         return true;
     }
 
-    private void switchPlayer() {
 
-        if (currentPlayer == Player.BLACK) {
-            currentPlayer = Player.WHITE;
-        } else {
-            currentPlayer = Player.BLACK;
-        }
-    }
-
-    private boolean checkWin(Player player) {
+    protected boolean checkWin(Player player) {
 
         int size = Board.SIZE;
 

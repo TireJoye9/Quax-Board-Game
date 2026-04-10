@@ -22,11 +22,11 @@ class GameFlowIntegrationTest {
     void testTwoTurnFlowWithPieces() {
         assertTrue(engine.placePiece(0, 0));
         assertEquals(Player.BLACK, board.getOctagon(0, 0).getOwner());
-        assertEquals(Player.WHITE, engine.getCurrentPlayer());
+        assertEquals(Player.WHITE, engine.getHumanPlayer());
 
         assertTrue(engine.placePiece(0, 1));
         assertEquals(Player.WHITE, board.getOctagon(0, 1).getOwner());
-        assertEquals(Player.BLACK, engine.getCurrentPlayer());
+        assertEquals(Player.BLACK, engine.getHumanPlayer());
     }
 
     @Test
@@ -37,7 +37,7 @@ class GameFlowIntegrationTest {
 
         assertEquals(Player.BLACK, board.getOctagon(1, 1).getOwner());
         assertEquals(Player.WHITE, board.getDiamond(1, 1).getOwner());
-        assertEquals(Player.BLACK, engine.getCurrentPlayer());
+        assertEquals(Player.BLACK, engine.getHumanPlayer());
     }
 
     @Test
@@ -50,7 +50,7 @@ class GameFlowIntegrationTest {
 
         assertEquals(Player.BLACK, ownerAfterFirstMove);
         assertEquals(ownerAfterFirstMove, board.getOctagon(2, 2).getOwner());
-        assertEquals(Player.WHITE, engine.getCurrentPlayer());
+        assertEquals(Player.WHITE, engine.getHumanPlayer());
     }
 
     @Test
