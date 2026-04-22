@@ -33,7 +33,13 @@ public class GameEngine {
         return humanPlayer;
     }
 
-    public Player getBotPlayer() { return botPlayer; }
+    public Player getBotPlayer() {
+        return botPlayer;
+    }
+
+    public boolean isGameOver() {
+        return gameOver;
+    }
 
     public boolean swapOffer() {
         return firstMoveMade && !swapOffered;
@@ -44,34 +50,51 @@ public class GameEngine {
     }
 
     public void performSwap() {
-
         swapOffered = true;
 
+        // Swap the player assignments
         if (humanPlayer == Player.BLACK) {
-            botPlayer = Player.BLACK;
             humanPlayer = Player.WHITE;
+            botPlayer = Player.BLACK;
         } else {
             humanPlayer = Player.BLACK;
             botPlayer = Player.WHITE;
         }
 
+        // Get the first move cell (human's first move)
         OctagonalCell firstCell = board.getOctagon(firstMoveRow, firstMoveCol);
 
+        // Transfer ownership of the first move to the other player
         if (firstCell.getOwner() == Player.BLACK) {
             firstCell.setOwner(Player.WHITE);
         } else {
             firstCell.setOwner(Player.BLACK);
         }
+
+
+        // Find the bot's piece (the only other piece on board besides first move)
+        //And swap it
+        for (int r = 0; r < Board.SIZE; r++) {
+            for (int c = 0; c < Board.SIZE; c++) {
+                OctagonalCell cell = board.getOctagon(r, c);
+                if (cell.getOwner() != Player.NONE && (r != firstMoveRow || c != firstMoveCol)) {
+                    // This is the bot's piece - transfer it to human's new color
+                    if (cell.getOwner() == Player.BLACK) {
+                        cell.setOwner(Player.WHITE);
+                    } else {
+                        cell.setOwner(Player.BLACK);
+                    }
+                }
+            }
+        }
     }
 
     public boolean placePiece(int r, int c) {
-
         if (gameOver) {
             return false;
         }
 
         OctagonalCell cell = board.getOctagon(r, c);
-
 
         if (cell.getOwner() != Player.NONE) {
             return false;
@@ -82,10 +105,12 @@ public class GameEngine {
         if (checkWin(humanPlayer)) {
             gameOver = true;
             showWinnerPopup(humanPlayer);
+            return true;
         }
         else if (checkWin(botPlayer)) {
             gameOver = true;
             showWinnerPopup(botPlayer);
+            return true;
         }
 
         if (!firstMoveMade) {
@@ -94,19 +119,15 @@ public class GameEngine {
             firstMoveCol = c;
         }
 
-        //switchPlayer();
-
         return true;
     }
 
     public boolean botPlacePiece(int r, int c) {
-
         if (gameOver) {
             return false;
         }
 
         OctagonalCell cell = board.getOctagon(r, c);
-
 
         if (cell.getOwner() != Player.NONE) {
             return false;
@@ -114,13 +135,15 @@ public class GameEngine {
 
         cell.setOwner(botPlayer);
 
-        if (checkWin(humanPlayer)) {
-            gameOver = true;
-            showWinnerPopup(humanPlayer);
-        }
-        else if (checkWin(botPlayer)) {
+        if (checkWin(botPlayer)) {
             gameOver = true;
             showWinnerPopup(botPlayer);
+            return true;
+        }
+        else if (checkWin(humanPlayer)) {
+            gameOver = true;
+            showWinnerPopup(humanPlayer);
+            return true;
         }
 
         if (!firstMoveMade) {
@@ -133,7 +156,6 @@ public class GameEngine {
     }
 
     public boolean botPlaceBridge(int r, int c) {
-
         if (gameOver) {
             return false;
         }
@@ -149,13 +171,18 @@ public class GameEngine {
         if (checkWin(botPlayer)) {
             gameOver = true;
             showWinnerPopup(botPlayer);
+            return true;
+        }
+        else if (checkWin(humanPlayer)) {
+            gameOver = true;
+            showWinnerPopup(humanPlayer);
+            return true;
         }
 
         return true;
     }
 
     public boolean placeBridge(int r, int c) {
-
         if (gameOver) {
             return false;
         }
@@ -171,21 +198,18 @@ public class GameEngine {
         if (checkWin(humanPlayer)) {
             gameOver = true;
             showWinnerPopup(humanPlayer);
+            return true;
         }
 
         return true;
     }
 
-
     protected boolean checkWin(Player player) {
-
         int size = Board.SIZE;
-
         boolean[][] visited = new boolean[size][size];
         Stack<int[]> stack = new Stack<>();
 
         if (player == Player.BLACK) {
-
             for (int c = 0; c < size; c++) {
                 if (board.getOctagon(0, c).getOwner() == player) {
                     stack.push(new int[]{0, c});
@@ -193,7 +217,6 @@ public class GameEngine {
             }
 
             while (!stack.isEmpty()) {
-
                 int[] pos = stack.pop();
                 int r = pos[0];
                 int c = pos[1];
@@ -213,7 +236,6 @@ public class GameEngine {
         }
 
         if (player == Player.WHITE) {
-
             for (int r = 0; r < size; r++) {
                 if (board.getOctagon(r, 0).getOwner() == player) {
                     stack.push(new int[]{r, 0});
@@ -221,7 +243,6 @@ public class GameEngine {
             }
 
             while (!stack.isEmpty()) {
-
                 int[] pos = stack.pop();
                 int r = pos[0];
                 int c = pos[1];
@@ -244,7 +265,6 @@ public class GameEngine {
     }
 
     private void exploreNeighbours(Player player, Stack<int[]> stack, int r, int c) {
-
         int[][] dirs = {
                 {-1,0},
                 {1,0},
@@ -253,12 +273,10 @@ public class GameEngine {
         };
 
         for (int[] d : dirs) {
-
             int nr = r + d[0];
             int nc = c + d[1];
 
             if (nr >= 0 && nr < Board.SIZE && nc >= 0 && nc < Board.SIZE) {
-
                 if (board.getOctagon(nr, nc).getOwner() == player) {
                     stack.push(new int[]{nr, nc});
                 }
@@ -271,7 +289,6 @@ public class GameEngine {
 
             if (bridge.getOwner() == player &&
                     board.getOctagon(r + 1, c + 1).getOwner() == player) {
-
                 stack.push(new int[]{r + 1, c + 1});
             }
         }
@@ -281,30 +298,40 @@ public class GameEngine {
 
             if (bridge.getOwner() == player &&
                     board.getOctagon(r + 1, c - 1).getOwner() == player) {
-
                 stack.push(new int[]{r + 1, c - 1});
             }
         }
     }
 
     private void showWinnerPopup(Player winner) {
-
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Game Over");
-        alert.setHeaderText("Winner: " + winner);
-        alert.setContentText("Play again?");
-
-        ButtonType playAgain = new ButtonType("Play Again");
-        ButtonType exit = new ButtonType("Exit");
-
-        alert.getButtonTypes().setAll(playAgain, exit);
-
-        Optional<ButtonType> result = alert.showAndWait();
-
-        if (result.isPresent() && result.get() == playAgain) {
-            quaxGUI.resetGame();
+        String winnerText;
+        if (winner == humanPlayer) {
+            winnerText = "HUMAN wins!";
+        } else if (winner == botPlayer) {
+            winnerText = "BOT wins!";
         } else {
-            Platform.exit();
+            winnerText = winner.toString() + " wins!";
         }
+
+        // Use Platform.runLater to show dialog safely
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Game Over");
+            alert.setHeaderText(winnerText);
+            alert.setContentText("Play again?");
+
+            ButtonType playAgain = new ButtonType("Play Again");
+            ButtonType exit = new ButtonType("Exit");
+
+            alert.getButtonTypes().setAll(playAgain, exit);
+
+            Optional<ButtonType> result = alert.showAndWait();
+
+            if (result.isPresent() && result.get() == playAgain) {
+                quaxGUI.resetGame();
+            } else {
+                Platform.exit();
+            }
+        });
     }
 }
