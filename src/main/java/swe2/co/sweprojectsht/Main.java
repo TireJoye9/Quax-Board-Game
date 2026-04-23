@@ -6,7 +6,6 @@ import javafx.scene.Scene;
 
 public class Main extends Application {
 
-    @Override
     public void start(Stage stage) {
 
         QuaxGUI gui = new QuaxGUI();

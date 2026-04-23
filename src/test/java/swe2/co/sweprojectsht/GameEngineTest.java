@@ -20,7 +20,7 @@ class GameEngineTest {
     @Test
     @DisplayName("Game should start with BLACK as the current player")
     void testInitialCurrentPlayer() {
-        assertEquals(Player.BLACK, engine.getCurrentPlayer());
+        assertEquals(Player.BLACK, engine.getHumanPlayer());
     }
 
     @Test
@@ -43,7 +43,7 @@ class GameEngineTest {
     void testPlacePieceSwitchesPlayer() {
         engine.placePiece(2, 2);
 
-        assertEquals(Player.WHITE, engine.getCurrentPlayer());
+        assertEquals(Player.WHITE, engine.getHumanPlayer());
     }
 
     @Test
@@ -67,12 +67,12 @@ class GameEngineTest {
     @DisplayName("Failed octagon placement should not change current player")
     void testFailedPiecePlacementDoesNotSwitchPlayer() {
         engine.placePiece(4, 4); // BLACK places, now WHITE turn
-        Player currentBeforeFailedMove = engine.getCurrentPlayer();
+        Player currentBeforeFailedMove = engine.getHumanPlayer();
 
         boolean placedAgain = engine.placePiece(4, 4);
 
         assertFalse(placedAgain);
-        assertEquals(currentBeforeFailedMove, engine.getCurrentPlayer());
+        assertEquals(currentBeforeFailedMove, engine.getHumanPlayer());
     }
 
     @Test
@@ -89,7 +89,7 @@ class GameEngineTest {
     void testPlaceBridgeSwitchesPlayer() {
         engine.placeBridge(3, 3);
 
-        assertEquals(Player.WHITE, engine.getCurrentPlayer());
+        assertEquals(Player.WHITE, engine.getHumanPlayer());
     }
 
     @Test
@@ -105,12 +105,12 @@ class GameEngineTest {
     @DisplayName("Failed bridge placement should not change current player")
     void testFailedBridgePlacementDoesNotSwitchPlayer() {
         engine.placeBridge(5, 5); // BLACK places, now WHITE turn
-        Player currentBeforeFailedMove = engine.getCurrentPlayer();
+        Player currentBeforeFailedMove = engine.getHumanPlayer();
 
         boolean placedAgain = engine.placeBridge(5, 5);
 
         assertFalse(placedAgain);
-        assertEquals(currentBeforeFailedMove, engine.getCurrentPlayer());
+        assertEquals(currentBeforeFailedMove, engine.getHumanPlayer());
     }
 
     @Test
@@ -132,7 +132,7 @@ class GameEngineTest {
         engine.performSwap();
 
         assertEquals(Player.WHITE, board.getOctagon(0, 0).getOwner());
-        assertEquals(Player.BLACK, engine.getCurrentPlayer());
+        assertEquals(Player.BLACK, engine.getHumanPlayer());
         assertFalse(engine.swapOffer());
     }
 }
