@@ -18,50 +18,48 @@ class GameFlowIntegrationTest {
     }
 
     @Test
-    @DisplayName("Two valid octagon moves should alternate BLACK then WHITE")
-    void testTwoTurnFlowWithPieces() {
+    @DisplayName("Human and bot octagon moves should update board correctly")
+    void testHumanAndBotPieceFlow() {
         assertTrue(engine.placePiece(0, 0));
         assertEquals(Player.BLACK, board.getOctagon(0, 0).getOwner());
-        assertEquals(Player.WHITE, engine.getHumanPlayer());
 
-        assertTrue(engine.placePiece(0, 1));
+        assertTrue(engine.botPlacePiece(0, 1));
         assertEquals(Player.WHITE, board.getOctagon(0, 1).getOwner());
-        assertEquals(Player.BLACK, engine.getHumanPlayer());
     }
 
     @Test
-    @DisplayName("Piece move followed by bridge move should update board correctly")
-    void testPieceThenBridgeFlow() {
-        assertTrue(engine.placePiece(1, 1));   // BLACK
-        assertTrue(engine.placeBridge(1, 1));  // WHITE
+    @DisplayName("Human piece followed by bot bridge should update board correctly")
+    void testPieceThenBotBridgeFlow() {
+        assertTrue(engine.placePiece(1, 1));
+        assertTrue(engine.botPlaceBridge(1, 1));
 
         assertEquals(Player.BLACK, board.getOctagon(1, 1).getOwner());
         assertEquals(Player.WHITE, board.getDiamond(1, 1).getOwner());
-        assertEquals(Player.BLACK, engine.getHumanPlayer());
     }
 
     @Test
     @DisplayName("Invalid repeated octagon move should leave board state unchanged")
     void testRepeatedPieceMoveDoesNotOverwriteCell() {
-        assertTrue(engine.placePiece(2, 2)); // BLACK
+        assertTrue(engine.placePiece(2, 2));
         Player ownerAfterFirstMove = board.getOctagon(2, 2).getOwner();
 
-        assertFalse(engine.placePiece(2, 2)); // WHITE tries same cell
+        assertFalse(engine.placePiece(2, 2));
 
         assertEquals(Player.BLACK, ownerAfterFirstMove);
         assertEquals(ownerAfterFirstMove, board.getOctagon(2, 2).getOwner());
-        assertEquals(Player.WHITE, engine.getHumanPlayer());
+        assertEquals(Player.BLACK, engine.getHumanPlayer());
     }
 
     @Test
     @DisplayName("Invalid repeated diamond move should leave bridge owner unchanged")
     void testRepeatedBridgeMoveDoesNotOverwriteDiamond() {
-        assertTrue(engine.placeBridge(3, 3)); // BLACK
+        assertTrue(engine.placeBridge(3, 3));
         Player ownerAfterFirstMove = board.getDiamond(3, 3).getOwner();
 
-        assertFalse(engine.placeBridge(3, 3)); // WHITE tries same diamond
+        assertFalse(engine.placeBridge(3, 3));
 
         assertEquals(ownerAfterFirstMove, board.getDiamond(3, 3).getOwner());
+        assertEquals(Player.BLACK, engine.getHumanPlayer());
     }
 
     @Test
@@ -88,5 +86,7 @@ class GameFlowIntegrationTest {
         engine.performSwap();
 
         assertEquals(Player.WHITE, board.getOctagon(6, 6).getOwner());
+        assertEquals(Player.WHITE, engine.getHumanPlayer());
+        assertEquals(Player.BLACK, engine.getBotPlayer());
     }
 }

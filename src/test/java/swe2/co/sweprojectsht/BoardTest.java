@@ -49,31 +49,31 @@ class BoardTest {
     }
 
     @Test
-    @DisplayName("Octagonal cells should be connected orthogonally")
+    @DisplayName("Octagonal cells should be connected to octagons and diamonds")
     void testOctagonConnections() {
-        // Test interior cell has 4 neighbours
+        // Interior octagon: 4 orthogonal octagons + 4 diamonds
         OctagonalCell interior = board.getOctagon(5, 5);
-        assertEquals(4, interior.getNeighbours().size());
+        assertEquals(8, interior.getNeighbours().size());
 
-        // Test corner cells have 2 neighbours
+        // Corner octagons: 2 orthogonal octagons + 1 diamond
         OctagonalCell topLeft = board.getOctagon(0, 0);
-        assertEquals(2, topLeft.getNeighbours().size());
+        assertEquals(3, topLeft.getNeighbours().size());
 
         OctagonalCell topRight = board.getOctagon(0, 10);
-        assertEquals(2, topRight.getNeighbours().size());
+        assertEquals(3, topRight.getNeighbours().size());
 
         OctagonalCell bottomLeft = board.getOctagon(10, 0);
-        assertEquals(2, bottomLeft.getNeighbours().size());
+        assertEquals(3, bottomLeft.getNeighbours().size());
 
         OctagonalCell bottomRight = board.getOctagon(10, 10);
-        assertEquals(2, bottomRight.getNeighbours().size());
+        assertEquals(3, bottomRight.getNeighbours().size());
 
-        // Test edge (non-corner) cells have 3 neighbours
+        // Edge non-corner octagons: 3 orthogonal octagons + 2 diamonds
         OctagonalCell topEdge = board.getOctagon(0, 5);
-        assertEquals(3, topEdge.getNeighbours().size());
+        assertEquals(5, topEdge.getNeighbours().size());
 
         OctagonalCell leftEdge = board.getOctagon(5, 0);
-        assertEquals(3, leftEdge.getNeighbours().size());
+        assertEquals(5, leftEdge.getNeighbours().size());
     }
 
     @Test

@@ -46,8 +46,8 @@ class QuaxGUITest {
     }
 
     @Test
-    @DisplayName("Turn label should update to WHITE after BLACK places first piece")
-    void testTurnLabelUpdatesAfterMove() throws Exception {
+    @DisplayName("Turn label should stay BLACK after human places first piece")
+    void testTurnLabelAfterMove() throws Exception {
         QuaxGUI gui = runOnFxThreadAndWait(QuaxGUI::new);
 
         GameEngine engine = (GameEngine) getPrivateField(gui, "engine");
@@ -59,7 +59,7 @@ class QuaxGUITest {
             return null;
         });
 
-        assertEquals(" --------> White to play:", turnLabel.getText());
+        assertEquals(" --------> BLACK to play:", turnLabel.getText());
         assertNotNull(turnLabel.getGraphic());
     }
 
