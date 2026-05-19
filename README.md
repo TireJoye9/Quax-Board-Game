@@ -66,31 +66,6 @@ The game combines elements of connection games like Hex with unique bridge mecha
 | TestFX | UI testing framework |
 | Maven | Dependency management and build tool |
 
-## 📁 Project Structure
-SweProjectSHT/
-├── src/
-│ ├── main/
-│ │ └── java/
-│ │ └── swe2/co/sweprojectsht/
-│ │ ├── QuaxGUI.java # Main application window
-│ │ ├── Board.java # Board data structure
-│ │ ├── GameEngine.java # Game logic and rules
-│ │ ├── BoardRenderer.java # Visual rendering engine
-│ │ ├── Player.java # Player enum (BLACK/WHITE/NONE)
-│ │ ├── OctagonalCell.java # Octagon cell class
-│ │ ├── RhombicCell.java # Diamond bridge class
-│ │ └── Cell.java # Abstract cell parent class
-│ └── test/
-│ └── java/
-│ └── swe2/co/sweprojectsht/
-│ ├── BoardTest.java
-│ ├── GameEngineTest.java
-│ ├── QuaxGUITest.java
-│ ├── BoardRendererUITest.java
-│ └── GameFlowIntegrationTest.java
-├── pom.xml # Maven configuration
-└── README.md # This file
-
 
 ## 🔧 Installation & Setup
 
@@ -110,7 +85,3 @@ mvn clean package
 # Run the JAR
 java --module-path "path/to/javafx-sdk-21/lib" --add-modules javafx.controls,javafx.fxml -jar target/SweProjectSHT.jar
 
-Action	Method
-Place Piece	Click on any gray octagonal cell
-Place Bridge	Click on any gray diamond cell
-Activate Pie Rule	Click "Yes" on the swap confirmation dialog after first move
