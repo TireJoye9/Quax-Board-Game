@@ -2,20 +2,6 @@
 
 A strategic two-player board game built with JavaFX, featuring a unique hybrid grid of octagonal cells and diamond-shaped bridges. The game challenges players to connect opposite sides of the board while offering the Pie Rule for balanced gameplay.
 
-## 📋 Table of Contents
-- [Overview](#overview)
-- [Game Rules](#game-rules)
-- [Features](#features)
-- [Technologies Used](#technologies-used)
-- [Project Structure](#project-structure)
-- [Installation & Setup](#installation--setup)
-- [How to Run](#how-to-run)
-- [Running Tests](#running-tests)
-- [Game Controls](#game-controls)
-- [Screenshots](#screenshots)
-- [Future Enhancements](#future-enhancements)
-- [Contributors](#contributors)
-
 ## 🎮 Overview
 
 Quax is a turn-based strategy game played on an 11x11 board. Unlike traditional grid games, Quax features two types of playable cells:
