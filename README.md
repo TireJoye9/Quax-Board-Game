@@ -50,14 +50,14 @@ Comprehensive test suite: JUnit 5 and TestFX coverage
 
 Screenshots
 Main Game Board
-<img width="917" height="887" alt="image" src="https://github.com/user-attachments/assets/78ea3c90-5e2c-4125-b3b2-b7009b5f8ebd" />
+<img width="400" height="380" alt="image" src="https://github.com/user-attachments/assets/78ea3c90-5e2c-4125-b3b2-b7009b5f8ebd" />
 Progress
-<img width="725" height="875" alt="image" src="https://github.com/user-attachments/assets/935086f5-fa30-4461-ba46-fae3571a84bc" />
+<img width="380" height="430" alt="image" src="https://github.com/user-attachments/assets/935086f5-fa30-4461-ba46-fae3571a84bc" />
 Win Detection
-<img width="722" height="702" alt="image" src="https://github.com/user-attachments/assets/02ec0a9c-46fc-41df-953e-334841d4bda7" />
+<img width="300" height="250" alt="image" src="https://github.com/user-attachments/assets/02ec0a9c-46fc-41df-953e-334841d4bda7" />
 
 Pie Rule Activation
-<img width="833" height="877" alt="image" src="https://github.com/user-attachments/assets/55aa40df-9239-4222-91e8-63ca975aa3be" />
+<img width="400" height="380" alt="image" src="https://github.com/user-attachments/assets/55aa40df-9239-4222-91e8-63ca975aa3be" />
 
 
 Cell Type	Count	Purpose
